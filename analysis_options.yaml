@@ -1,0 +1,23 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+    language:
+        strict-casts: true
+        strict-inference: true
+        strict-raw-types: true
+    exclude:
+        - "build/**"
+        - "doc/api/**"
+        - "last_prod/**"
+        - "third_party/pkg/**"
+        - "web/example/workshops/**"
+    errors:
+        lines_longer_than_80_chars: ignore
+
+linter:
+    rules:
+        avoid_print: true # Uncomment to disable the `avoid_print` rule
+        prefer_single_quotes: true
+        prefer_const_constructors: true
+        prefer_relative_imports: true
+        unnecessary_new: true

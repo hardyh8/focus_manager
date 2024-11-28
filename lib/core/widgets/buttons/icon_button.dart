@@ -2,23 +2,29 @@ import 'package:flutter/material.dart';
 
 import '../../constants/colors.dart';
 
-class SecondaryButton extends StatelessWidget {
+class CustomIconButton extends StatelessWidget {
   final void Function()? onPressed;
-  final String data;
+  final IconData icon;
+  final double size;
 
-  const SecondaryButton({super.key, this.onPressed, required this.data});
+  const CustomIconButton({
+    super.key,
+    this.onPressed,
+    required this.icon,
+    required this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return IconButton(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(Colors.transparent),
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+          const EdgeInsets.all(10),
         ),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(50),
             side: const BorderSide(
               color: AppColors.primaryPinkColor,
               width: 2,
@@ -27,12 +33,10 @@ class SecondaryButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(
-        data,
-        style: const TextStyle(
-          color: AppColors.whiteColor,
-          fontSize: 14,
-        ),
+      icon: Icon(
+        icon,
+        size: size,
+        color: AppColors.whiteColor,
       ),
     );
   }

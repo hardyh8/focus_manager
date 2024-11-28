@@ -12,37 +12,39 @@ part 'focus_timer_state.dart';
 class FocusTimerBloc extends Bloc<FocusTimerEvent, FocusTimerState> {
   final Ticker _ticker;
   StreamSubscription<int>? _tickerSubscription;
+  int _duration = 60;
 
   FocusTimerBloc({required Ticker ticker})
       : _ticker = ticker,
-        super(FocusTimerInitial()) {
+        super(const FocusTimerInitial(60)) {
     on<TimerStartEvent>(_onStart);
     on<TimerStopEvent>(_onStop);
     on<TimerPauseEvent>(_onPause);
     on<TimerResumeEvent>(_onResume);
+    on<TimerSetDurationEvent>(_onSetDuration);
 
     on<TimerTickEvent>(_onTick);
   }
 
   void _onStart(TimerStartEvent event, Emitter<FocusTimerState> emit) async {
-    emit(FocusTimerStarted(event.duration));
+    emit(FocusTimerStarted(_duration));
 
     _tickerSubscription?.cancel();
     _tickerSubscription = _ticker
-        .tick(ticks: event.duration)
-        .listen((duration) => add(TimerTickEvent(duration, event.duration)));
+        .tick(ticks: _duration)
+        .listen((dur) => add(TimerTickEvent(dur, _duration)));
   }
 
   void _onStop(TimerStopEvent event, Emitter<FocusTimerState> emit) {
     _tickerSubscription?.cancel();
-    emit(FocusTimerInitial());
+    emit(FocusTimerInitial(_duration));
   }
 
   void _onPause(TimerPauseEvent event, Emitter<FocusTimerState> emit) {
     if (state is FocusTimerRunning) {
       _tickerSubscription?.pause();
       var running = (state as FocusTimerRunning);
-      emit(FocusTimerPaused(running.remainingTime, running.totalTime));
+      emit(FocusTimerPaused(running.remainingTime, _duration));
     }
   }
 
@@ -50,16 +52,23 @@ class FocusTimerBloc extends Bloc<FocusTimerEvent, FocusTimerState> {
     if (state is FocusTimerPaused) {
       _tickerSubscription?.resume();
       var paused = (state as FocusTimerPaused);
-      emit(FocusTimerRunning(paused.leftTime, paused.totalTime));
+      emit(FocusTimerRunning(paused.leftTime, _duration));
     }
   }
 
   void _onTick(TimerTickEvent event, Emitter<FocusTimerState> emit) {
-    emit(
-      event.duration > 0
-          ? FocusTimerRunning(event.duration, event.totalTime)
-          : FocusTimerCompleted(),
-    );
+    emit(event.duration > 0
+        ? FocusTimerRunning(event.duration, event.totalTime)
+        : FocusTimerCompleted(event.totalTime));
+  }
+
+  void _onSetDuration(
+      TimerSetDurationEvent event, Emitter<FocusTimerState> emit) {
+    _duration = event.duration;
+    if (state is FocusTimerPaused || state is FocusTimerRunning) {
+      add(TimerStopEvent());
+    }
+    emit(FocusTimerDurationUpdated(_duration));
   }
 
   @override

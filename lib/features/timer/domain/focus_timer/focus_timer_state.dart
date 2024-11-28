@@ -2,39 +2,42 @@ part of 'focus_timer_bloc.dart';
 
 @immutable
 abstract class FocusTimerState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-final class FocusTimerInitial extends FocusTimerState {}
-
-final class FocusTimerStarted extends FocusTimerState {
   final int duration;
-
-  FocusTimerStarted(this.duration);
-
+  const FocusTimerState(this.duration);
   @override
   List<Object?> get props => [duration];
 }
 
+final class FocusTimerInitial extends FocusTimerState {
+  const FocusTimerInitial(super.duration);
+}
+
+final class FocusTimerStarted extends FocusTimerState {
+  const FocusTimerStarted(super.duration);
+}
+
 final class FocusTimerRunning extends FocusTimerState {
   final int remainingTime;
-  final int totalTime;
 
-  FocusTimerRunning(this.remainingTime, this.totalTime);
+  const FocusTimerRunning(this.remainingTime, super.duration);
 
   @override
-  List<Object?> get props => [remainingTime, totalTime];
+  List<Object?> get props => [remainingTime, super.duration];
 }
 
 final class FocusTimerPaused extends FocusTimerState {
   final int leftTime;
-  final int totalTime;
 
-  FocusTimerPaused(this.leftTime, this.totalTime);
+  const FocusTimerPaused(this.leftTime, super.duration);
 
   @override
-  List<Object?> get props => [leftTime, totalTime];
+  List<Object?> get props => [leftTime, super.duration];
 }
 
-final class FocusTimerCompleted extends FocusTimerState {}
+final class FocusTimerCompleted extends FocusTimerState {
+  const FocusTimerCompleted(super.duration);
+}
+
+final class FocusTimerDurationUpdated extends FocusTimerState {
+  const FocusTimerDurationUpdated(super.duration);
+}

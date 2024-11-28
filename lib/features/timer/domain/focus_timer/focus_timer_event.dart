@@ -6,13 +6,7 @@ abstract class FocusTimerEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class TimerStartEvent extends FocusTimerEvent {
-  final int duration;
-  TimerStartEvent(this.duration);
-
-  @override
-  List<Object?> get props => [duration];
-}
+class TimerStartEvent extends FocusTimerEvent {}
 
 class TimerStopEvent extends FocusTimerEvent {}
 
@@ -25,3 +19,11 @@ class TimerTickEvent extends FocusTimerEvent {
 class TimerPauseEvent extends FocusTimerEvent {}
 
 class TimerResumeEvent extends FocusTimerEvent {}
+
+class TimerSetDurationEvent extends FocusTimerEvent {
+  final int duration;
+  TimerSetDurationEvent(this.duration);
+
+  @override
+  List<Object?> get props => [duration];
+}

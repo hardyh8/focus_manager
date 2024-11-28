@@ -4,6 +4,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/utils/get_it/get_it_instance.dart';
+import '../../data/api/focus_time_db.dart';
+import '../../data/models/focus_time_model.dart';
 import '../ticker.dart';
 
 part 'focus_timer_event.dart';
@@ -57,9 +60,16 @@ class FocusTimerBloc extends Bloc<FocusTimerEvent, FocusTimerState> {
   }
 
   void _onTick(TimerTickEvent event, Emitter<FocusTimerState> emit) {
-    emit(event.duration > 0
-        ? FocusTimerRunning(event.duration, event.totalTime)
-        : FocusTimerCompleted(event.totalTime));
+    if (event.duration > 0) {
+      emit(FocusTimerRunning(event.duration, event.totalTime));
+    } else {
+      FocusTimeSessionModel model = FocusTimeSessionModel(
+        completedSecond: event.totalTime,
+        completionDateTime: DateTime.now(),
+      );
+      getIt.get<FocusTimeDb>().insert(model);
+      emit(FocusTimerCompleted(event.totalTime));
+    }
   }
 
   void _onSetDuration(

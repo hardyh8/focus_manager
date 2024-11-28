@@ -3,7 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'features/home/home.dart';
 
-void main() => runApp(const FocusManagementApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const FocusManagementApp());
+}
 
 class FocusManagementApp extends StatelessWidget {
   const FocusManagementApp({super.key});

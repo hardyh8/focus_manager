@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'features/home/home.dart';
+import 'features/calendar/presentation/screen/add_event_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ class FocusManagementApp extends StatelessWidget {
         textTheme: GoogleFonts.nunitoTextTheme(),
       ),
       debugShowCheckedModeBanner: false,
-      home: const Home(),
+      home: const AddEventScreen(isEdit: false),
     );
   }
 }

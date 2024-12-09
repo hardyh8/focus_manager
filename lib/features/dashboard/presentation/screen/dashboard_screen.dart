@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../../calendar/domain/schedule_bloc/schedule_bloc.dart';
 import '../widgets/charts.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -43,59 +46,70 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.borderColor2,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.backgroundColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Kickoff agenda',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: AppColors.whiteColor,
-                            ),
+            BlocBuilder<ScheduleBloc, ScheduleState>(
+              builder: (context, state) {
+                bool hasScheduled = state.upcomingTask != null;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.borderColor2,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundColor,
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Remember to include Jean\'s notes',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: AppColors.whiteColor,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '9.45 AM - 11.45 AM',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                hasScheduled
+                                    ? state.upcomingTask!.subject
+                                    : 'Schedule Task',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
                                   color: AppColors.whiteColor,
                                 ),
-                              )
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                hasScheduled ? state.upcomingTask!.note : '',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: AppColors.whiteColor,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    hasScheduled
+                                        ? timeDisplayText(
+                                            state.upcomingTask!.fromTime,
+                                            state.upcomingTask!.toTime)
+                                        : '',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.whiteColor,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             const SizedBox(height: 20),
             Row(
@@ -162,5 +176,11 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String timeDisplayText(DateTime fromTime, DateTime toTime) {
+    String fromText = DateFormat('hh:mm a').format(fromTime);
+    String toText = DateFormat('hh:mm a').format(toTime);
+    return '$fromText - $toText';
   }
 }

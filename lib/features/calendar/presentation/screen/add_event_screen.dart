@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/input_fields/basic_field.dart';
 import '../../../../core/widgets/input_fields/time_picker_field.dart';
+import '../../domain/entities/schedule_event_entity.dart';
+import '../../domain/schedule_bloc/schedule_bloc.dart';
 
 class AddEventScreen extends StatefulWidget {
   const AddEventScreen({super.key, required this.isEdit});
@@ -93,9 +96,14 @@ class _AddEventScreenState extends State<AddEventScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: PrimaryButton(
-                          data: 'Save',
-                          onPressed: () {},
+                        child: BlocProvider(
+                          create: (context) => ScheduleBloc(),
+                          child: PrimaryButton(
+                            data: 'Save',
+                            onPressed: () {
+                              onButtonPressed(context);
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -107,5 +115,47 @@ class _AddEventScreenState extends State<AddEventScreen> {
         ),
       ),
     );
+  }
+
+  void onButtonPressed(BuildContext context) {
+    var fromSplits = fromTimeController.text.split(':');
+    var fromHour = int.tryParse(fromSplits[0]) ?? 0;
+    var fromMinute = int.tryParse(fromSplits[1]) ?? 0;
+
+    var toSplits = toTimeController.text.split(':');
+    var toHour = int.tryParse(toSplits[0]) ?? 0;
+    var toMinute = int.tryParse(toSplits[1]) ?? 0;
+
+    var now = DateTime.now();
+    var fromTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      fromHour,
+      fromMinute,
+    );
+    var toTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      toHour,
+      toMinute,
+    );
+
+    var scheduleEventEntity = ScheduleEventEntity(
+      fromTime: fromTime,
+      toTime: toTime,
+      note: notesController.text,
+      subject: subjectController.text,
+    );
+    if (widget.isEdit) {
+      context
+          .read<ScheduleBloc>()
+          .add(ScheduleEditEvent(task: scheduleEventEntity));
+    } else {
+      context
+          .read<ScheduleBloc>()
+          .add(ScheduleCreateEvent(task: scheduleEventEntity));
+    }
   }
 }

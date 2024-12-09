@@ -1,16 +1,9 @@
 part of 'schedule_bloc.dart';
 
 sealed class ScheduleEvent extends Equatable {
-  const ScheduleEvent();
-
-  @override
-  List<Object> get props => [];
-}
-
-class ScheduleCreateEvent extends ScheduleEvent {
   final ScheduleEventEntity task;
 
-  const ScheduleCreateEvent({
+  const ScheduleEvent({
     required this.task,
   });
 
@@ -18,8 +11,22 @@ class ScheduleCreateEvent extends ScheduleEvent {
   List<Object> get props => [task];
 }
 
-class ScheduleCompletedEvent extends ScheduleEvent {}
+class ScheduleInitializeEvent extends ScheduleEvent {
+  const ScheduleInitializeEvent({required super.task});
+}
 
-class ScheduleFailedEvent extends ScheduleEvent {}
+class ScheduleCreateEvent extends ScheduleEvent {
+  const ScheduleCreateEvent({required super.task});
+}
 
-class ScheduleEditEvent extends ScheduleEvent {}
+class ScheduleCompletedEvent extends ScheduleEvent {
+  const ScheduleCompletedEvent({required super.task});
+}
+
+class ScheduleFailedEvent extends ScheduleEvent {
+  const ScheduleFailedEvent({required super.task});
+}
+
+class ScheduleEditEvent extends ScheduleEvent {
+  const ScheduleEditEvent({required super.task});
+}

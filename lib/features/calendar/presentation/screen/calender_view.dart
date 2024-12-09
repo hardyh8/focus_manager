@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../domain/schedule_bloc/schedule_bloc.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
@@ -35,34 +37,39 @@ class CalendarScreen extends StatelessWidget {
           children: [
             _buildDatePicker(),
             const SizedBox(height: 20),
-            Expanded(
-              child: SfCalendar(
-                view: CalendarView.day,
-                dataSource: _getCalendarDataSource(),
-                timeSlotViewSettings: const TimeSlotViewSettings(
-                  timeIntervalHeight: 60,
-                  startHour: 6,
-                  endHour: 20,
-                  timeFormat: 'h a',
-                  timeTextStyle: TextStyle(
-                    color: AppColors.borderColor,
-                    fontSize: 12,
+            BlocBuilder<ScheduleBloc, ScheduleState>(
+              builder: (context, state) {
+                var getCalendarDataSource = _getCalendarDataSource(state);
+                return Expanded(
+                  child: SfCalendar(
+                    view: CalendarView.day,
+                    dataSource: getCalendarDataSource,
+                    timeSlotViewSettings: const TimeSlotViewSettings(
+                      timeIntervalHeight: 60,
+                      startHour: 6,
+                      endHour: 20,
+                      timeFormat: 'h a',
+                      timeTextStyle: TextStyle(
+                        color: AppColors.borderColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                    viewHeaderHeight: 0,
+                    headerHeight: 0,
+                    todayHighlightColor: AppColors.primaryPinkColor,
+                    backgroundColor: AppColors.backgroundColor,
+                    appointmentTextStyle: const TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: 14,
+                    ),
+                    appointmentBuilder: (context, calendarAppointmentDetails) {
+                      final appointment = calendarAppointmentDetails
+                          .appointments.first as Appointment;
+                      return _buildCustomAppointmentTile(appointment);
+                    },
                   ),
-                ),
-                viewHeaderHeight: 0,
-                headerHeight: 0,
-                todayHighlightColor: AppColors.primaryPinkColor,
-                backgroundColor: AppColors.backgroundColor,
-                appointmentTextStyle: const TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 14,
-                ),
-                appointmentBuilder: (context, calendarAppointmentDetails) {
-                  final appointment = calendarAppointmentDetails
-                      .appointments.first as Appointment;
-                  return _buildCustomAppointmentTile(appointment);
-                },
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -191,28 +198,33 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  _DataSource _getCalendarDataSource() {
-    return _DataSource(<Appointment>[
-      Appointment(
-        startTime: DateTime.now().add(const Duration(hours: 0)),
-        endTime: DateTime.now().add(const Duration(hours: 2)),
-        subject: 'Desk research',
-        color: Colors.grey[800]!,
-      ),
-      Appointment(
-        startTime: DateTime.now().add(const Duration(hours: 3)),
-        endTime: DateTime.now().add(const Duration(hours: 5)),
-        subject: 'Kickoff agenda',
-        notes: "Remember to include Jean's notes",
-        color: AppColors.secondaryPurpleColor,
-      ),
-      Appointment(
-        startTime: DateTime.now().add(const Duration(hours: 6)),
-        endTime: DateTime.now().add(const Duration(hours: 8)),
-        subject: 'Dribbble shot prep',
-        color: AppColors.calendarblueColor,
-      ),
-    ]);
+  _DataSource _getCalendarDataSource(ScheduleState state) {
+    List<Appointment> appointments = List.empty(growable: true);
+    for (var task in state.taskList) {
+      appointments.add(
+        Appointment(
+          startTime: task.fromTime,
+          endTime: task.toTime,
+          subject: task.subject,
+          notes: task.note,
+          recurrenceId: state.taskList.indexOf(task),
+          color: timeBasedColor(task.fromTime),
+        ),
+      );
+    }
+    return _DataSource(appointments);
+  }
+
+  Color timeBasedColor(DateTime checkTime) {
+    var compare = checkTime.compareTo(DateTime.now());
+    if (compare == 0) {
+      return AppColors.secondaryPurpleColor;
+    } else if (compare > 0) {
+      return AppColors.calendarblueColor;
+    } else if (compare < 0) {
+      return AppColors.disabledGreyColor;
+    }
+    return AppColors.disabledGreyColor;
   }
 }
 

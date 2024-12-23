@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,9 +23,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     on<ScheduleInitializeEvent>(_onInitialize);
   }
 
-  void _onCreate(ScheduleCreateEvent event, Emitter<ScheduleState> emit) {
+  void _onCreate(ScheduleCreateEvent event, Emitter<ScheduleState> emit) async {
     var task = event.task;
-    repo.insert(ScheduleEventModel(
+    var isd = await repo.insert(ScheduleEventModel(
       fromTime: task.fromTime,
       toTime: task.toTime,
       isCompleted: false,
@@ -31,6 +33,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       note: task.note,
       subject: task.subject,
     ));
+    log(isd.toString());
     emit(ScheduleCreated(task: event.task, taskList: state.taskList));
   }
 

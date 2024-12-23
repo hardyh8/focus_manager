@@ -16,7 +16,7 @@ class TimePickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(color: AppColors.whiteColor, fontSize: 14);
+    const textStyle = TextStyle(color: AppColors.whiteColor, fontSize: 16);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,19 +32,16 @@ class TimePickerField extends StatelessWidget {
           controller: controller,
           style: textStyle,
           textAlign: TextAlign.left,
+          textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
             hintText: hintText,
             enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: AppColors.borderColor)),
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: AppColors.primaryPinkColor)),
-            hintStyle: textStyle,
-            labelStyle: textStyle,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            contentPadding: const EdgeInsets.fromLTRB(20, 0, 10, 10),
             suffix: IconButton(
               onPressed: onIconPressed,
-              padding: EdgeInsets.zero,
               icon: const Icon(
                 Icons.timer_outlined,
                 color: AppColors.whiteColor,

@@ -26,12 +26,16 @@ class BasicField extends StatelessWidget {
         const SizedBox(height: 5),
         TextField(
           controller: controller,
+          style: const TextStyle(
+            color: AppColors.whiteColor,
+          ),
           decoration: InputDecoration(
-              hintText: hintText,
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.borderColor)),
-              focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primaryPinkColor))),
+            hintText: hintText,
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.borderColor)),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.primaryPinkColor)),
+          ),
         ),
       ],
     );

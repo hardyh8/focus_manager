@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../../../core/router/routes.dart';
 import '../../domain/schedule_bloc/schedule_bloc.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -77,7 +79,9 @@ class CalendarScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         backgroundColor: AppColors.primaryPinkColor,
-        onPressed: () {},
+        onPressed: () {
+          context.goNamed(AppRoute.eventDetails.name, extra: null);
+        },
         elevation: 8,
         child: const Icon(
           Icons.add,
@@ -148,7 +152,7 @@ class CalendarScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 15),
       child: SizedBox(
-        height: 70,
+        height: 75,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: days.length,

@@ -1,42 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/colors.dart';
-import '../calendar/presentation/screen/calender_view.dart';
-import '../dashboard/presentation/screen/dashboard_screen.dart';
-import '../timer/presentation/screen/timer_screen.dart';
+import '../../core/router/routes.dart';
+import '../calendar/domain/schedule_bloc/schedule_bloc.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
-
+  const Home({super.key, required this.navigationShell});
+  final StatefulNavigationShell navigationShell;
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final List<Widget> bottomNavWidgets = [
-    const DashboardScreen(),
-    const TimerScreen(),
-    const CalendarScreen(),
-  ];
   List<BottomNavigationBarItem> items = List.empty(growable: true);
-  int selectedItem = 0;
   final List<IconData> icons = [
     Icons.dashboard,
     Icons.timer_outlined,
     Icons.calendar_today_outlined,
-    Icons.analytics_outlined,
+    // Icons.analytics_outlined,
+  ];
+
+  final List<String> sidebarItemPaths = [
+    AppRoute.dashboard.name,
+    AppRoute.timer.name,
+    AppRoute.calendar.name,
   ];
 
   @override
   Widget build(BuildContext context) {
     items = List.empty(growable: true);
-    for (var i = 0; i < bottomNavWidgets.length; i++) {
+    for (var i = 0; i < icons.length; i++) {
       items.add(
         BottomNavigationBarItem(
+          backgroundColor: AppColors.backgroundColor,
           label: '',
           icon: Icon(
             icons[i],
-            color: selectedItem == i
+            color: widget.navigationShell.currentIndex == i
                 ? AppColors.primaryPinkColor
                 : AppColors.whiteColor,
           ),
@@ -50,15 +52,23 @@ class _HomeState extends State<Home> {
         backgroundColor: AppColors.backgroundColor,
         items: items,
         onTap: (value) {
-          if (value != selectedItem) {
-            setState(() {
+          if (value != widget.navigationShell.currentIndex) {
+            /* setState(() {
               selectedItem = value;
-            });
+            }); */
+            context.goNamed(sidebarItemPaths[value], extra: false);
           }
         },
       ),
-      body: SafeArea(
-        child: bottomNavWidgets[selectedItem],
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ScheduleBloc(),
+          ),
+        ],
+        child: SafeArea(
+          child: widget.navigationShell,
+        ),
       ),
     );
   }

@@ -43,73 +43,77 @@ class _AddEventScreenState extends State<AddEventScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                BasicField(
-                  controller: subjectController,
-                  hintText: 'Subject',
-                ),
-                const SizedBox(height: 15),
-                BasicField(
-                  controller: notesController,
-                  hintText: 'Notes',
-                ),
-                const SizedBox(height: 15),
-                TimePickerField(
-                  controller: fromTimeController,
-                  hintText: 'From Time',
-                  onIconPressed: () async {
-                    TimeOfDay? data = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (data != null) {
-                      setState(() {
-                        fromTimeController.text = '${data.hour}:${data.minute}';
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 15),
-                TimePickerField(
-                  controller: toTimeController,
-                  hintText: 'To Time',
-                  onIconPressed: () async {
-                    TimeOfDay? data = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (data != null) {
-                      setState(() {
-                        toTimeController.text = '${data.hour}:${data.minute}';
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: BlocProvider(
-                          create: (context) => ScheduleBloc(),
-                          child: PrimaryButton(
-                            data: 'Save',
-                            onPressed: () {
-                              onButtonPressed(context);
-                            },
+      body: BlocProvider(
+        create: (context) => ScheduleBloc(),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  BasicField(
+                    controller: subjectController,
+                    hintText: 'Subject',
+                  ),
+                  const SizedBox(height: 15),
+                  BasicField(
+                    controller: notesController,
+                    hintText: 'Notes',
+                  ),
+                  const SizedBox(height: 15),
+                  TimePickerField(
+                    controller: fromTimeController,
+                    hintText: 'From Time',
+                    onIconPressed: () async {
+                      TimeOfDay? data = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (data != null) {
+                        setState(() {
+                          fromTimeController.text =
+                              '${data.hour}:${data.minute}';
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  TimePickerField(
+                    controller: toTimeController,
+                    hintText: 'To Time',
+                    onIconPressed: () async {
+                      TimeOfDay? data = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (data != null) {
+                        setState(() {
+                          toTimeController.text = '${data.hour}:${data.minute}';
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: BlocProvider(
+                            create: (context) => ScheduleBloc(),
+                            child: PrimaryButton(
+                              data: 'Save',
+                              onPressed: () {
+                                onButtonPressed(context);
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
